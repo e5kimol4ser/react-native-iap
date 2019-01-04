@@ -156,6 +156,8 @@ export function clearProducts(): void;
  */
 export function finishTransaction(): void;
 
+export function getUnfinishedTransaction() : Promise<ProductPurchase>;
+
 /**
  * Consume a product (on Android.) No-op on iOS.
  * @param {string} token The product's token (on Android)

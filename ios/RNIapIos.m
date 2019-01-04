@@ -169,6 +169,16 @@ RCT_EXPORT_METHOD(finishTransaction) {
   currentTransaction = nil;
 }
 
+RCT_EXPORT_METHOD(getUnfinishedTransaction:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    if(currentTransaction) {
+        NSDictionary* purchase = [self getPurchaseData:currentTransaction];
+        resolve(purchase);
+    } else {
+        resolve(nil);
+    }
+}
+
 RCT_EXPORT_METHOD(clearTransaction) {
   NSArray *pendingTrans = [[SKPaymentQueue defaultQueue] transactions];
   NSLog(@"\n\n\n  ***  clear remaining Transactions. Call this before make a new transaction   \n\n.");
@@ -312,14 +322,14 @@ RCT_EXPORT_METHOD(clearProducts) {
   NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
   formatter.numberStyle = NSNumberFormatterCurrencyStyle;
   formatter.locale = product.priceLocale;
-	
+
   NSString* localizedPrice = [formatter stringFromNumber:product.price];
   NSString* introductoryPrice = localizedPrice;
-	
+
   NSString* introductoryPricePaymentMode = @"";
   NSString* introductoryPriceNumberOfPeriods = @"";
   NSString* introductoryPriceSubscriptionPeriod = @"";
-	
+
   NSString* currencyCode = @"";
   NSString* periodNumberIOS = @"0";
   NSString* periodUnitIOS = @"";
@@ -346,11 +356,11 @@ RCT_EXPORT_METHOD(clearProducts) {
     // subscriptionPeriod = product.subscriptionPeriod ? [product.subscriptionPeriod stringValue] : @"";
     //introductoryPrice = product.introductoryPrice != nil ? [NSString stringWithFormat:@"%@", product.introductoryPrice] : @"";
     if (product.introductoryPrice != nil) {
-      
+
       //SKProductDiscount introductoryPriceObj = product.introductoryPrice;
       formatter.locale = product.introductoryPrice.priceLocale;
       introductoryPrice = [formatter stringFromNumber:product.introductoryPrice.price];
-      
+
       switch (product.introductoryPrice.paymentMode) {
         case SKProductDiscountPaymentModeFreeTrial:
           introductoryPricePaymentMode = @"FREETRIAL";
@@ -365,9 +375,9 @@ RCT_EXPORT_METHOD(clearProducts) {
           introductoryPricePaymentMode = @"";
           break;
       }
-      
+
       introductoryPriceNumberOfPeriods = [@(product.introductoryPrice.numberOfPeriods) stringValue];
-      
+
       if (product.introductoryPrice.subscriptionPeriod.unit == SKProductPeriodUnitDay) {
         introductoryPriceSubscriptionPeriod = @"DAY";
       }	else if (product.introductoryPrice.subscriptionPeriod.unit == SKProductPeriodUnitWeek) {
@@ -379,7 +389,7 @@ RCT_EXPORT_METHOD(clearProducts) {
       } else {
         introductoryPriceSubscriptionPeriod = @"";
       }
-      
+
     } else {
       introductoryPrice = @"";
       introductoryPricePaymentMode = @"";
@@ -419,7 +429,7 @@ RCT_EXPORT_METHOD(clearProducts) {
   } else {
     receiptData = [transaction transactionReceipt];
   }
-  
+
   if (receiptData == nil) return nil;
 
   NSMutableDictionary *purchase = [NSMutableDictionary dictionaryWithObjectsAndKeys:

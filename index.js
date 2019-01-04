@@ -154,6 +154,11 @@ export const finishTransaction = () => Platform.select({
   android: () => Promise.resolve(),
 })();
 
+export const getUnfinishedTransaction = () => Platform.select({
+  ios: () => RNIapIos.getUnfinishedTransaction(),
+  android: () => Promise.resolve(),
+})();
+
 /**
  * Clear Transaction (iOS only)
  *   Finish remaining transactions. Related to issue #257
