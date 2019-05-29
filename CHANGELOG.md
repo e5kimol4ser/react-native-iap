@@ -1,8 +1,28 @@
 ## Changelogs
+- **[2.5.+]**
+  + Fix flow type [#482](https://github.com/dooboolab/react-native-iap/pull/482)
+  + Ugrade gradle to `3.2.1` [#488](https://github.com/dooboolab/react-native-iap/pull/488)
+  + Fix gradle api usage [#489](https://github.com/dooboolab/react-native-iap/pull/489)
+  + Fix promo code purchase not being restored [#490](https://github.com/dooboolab/react-native-iap/pull/490)
+  + Fix Platform Specific Type Definitions [#493](https://github.com/dooboolab/react-native-iap/pull/493)
+  + Add `ios` target for `tvOS` [#500](https://github.com/dooboolab/react-native-iap/pull/500)
 - **[2.4.+]**
+  + Add support for iOS In-App Purchase promotions [#388](https://github.com/dooboolab/react-native-iap/pull/388).
   + Implemented `addAdditionalSuccessPurchaseListenerIOS` to handle extra successed purchase event. Related to [#307](https://github.com/dooboolab/react-native-iap/issues/307).
   + Attempt to fix crashing in `ensureConnection` for android. Related [#315](https://github.com/dooboolab/react-native-iap/issues/315).
   + Fixed promise not resolving putting back `async` wrapper.
+  + Fixed types for `addAdditionalSuccessPurchaseListenerIOS`.
+  + Update `build.gradle` to match version in react-native `0.58`.
+  + Fix issue with promoted product event not firing on older devices [#390](https://github.com/dooboolab/react-native-iap/pull/390).
+  + Add support for iOS In-App Purchase promotions.
+  + Add stable channel for pod [#404](https://github.com/dooboolab/react-native-iap/issues/404).
+  + Add flow typed [#431](https://github.com/dooboolab/react-native-iap/pull/431)
+  + Prevent crashing from phones that doesn't have IAP feature [#434](https://github.com/dooboolab/react-native-iap/pull/434)
+  + Fixed types `flow` and `ts` [#441](https://github.com/dooboolab/react-native-iap/pull/441) [#449](https://github.com/dooboolab/react-native-iap/pull/441)
+  + Move `jcenter` below `Google repo` [#445](https://github.com/dooboolab/react-native-iap/pull/445)
+  + Fetch correct number of periods from introductory price [#454](https://github.com/dooboolab/react-native-iap/pull/454)
+  + Support to iOS subscription offers [#455](https://github.com/dooboolab/react-native-iap/pull/455)
+  + `initConnection` return bool [#459](https://github.com/dooboolab/react-native-iap/pull/459)
 - **[2.3.23]**
   + Resolve [#288](https://github.com/dooboolab/react-native-iap/issues/288).
 - **[2.3.21]**
