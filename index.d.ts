@@ -1,3 +1,5 @@
+import { EmitterSubscription } from 'react-native';
+
 import * as Apple from './apple'
 
 interface Common {
@@ -17,19 +19,24 @@ export interface Subscription<ID extends string> extends Common {
   type: 'subs' | 'sub'
   productId: ID
 
-  subscriptionPeriodNumberIOS?: string
-  subscriptionPeriodUnitIOS?: number
+  introductoryPrice?: string
+  introductoryPricePaymentModeIOS?: string
+  introductoryPriceNumberOfPeriodsIOS?: string
+  introductoryPriceSubscriptionPeriodIOS?: string
 
-  freeTrialPeriodAndroid?: string
-  introductoryPriceCyclesAndroid?: number
+  subscriptionPeriodNumberIOS?: string
+  subscriptionPeriodUnitIOS?: string
+
+  introductoryPriceCyclesAndroid?: string
   introductoryPricePeriodAndroid?: string
   subscriptionPeriodAndroid?: string
+  freeTrialPeriodAndroid?: string
 }
 
 export interface ProductPurchase {
   productId: string;
   transactionId: string;
-  transactionDate: string;
+  transactionDate: number;
   transactionReceipt: string;
   signatureAndroid?: string;
   dataAndroid?: string;
@@ -121,6 +128,17 @@ export function buySubscription(sku: string, oldSku?: string, prorationMode?: nu
 export function buyProduct(sku: string) : Promise<ProductPurchase>;
 
 /**
+ * Buy a product with offer
+ *
+ * @param {string} sku The product unique identifier
+ * @param {string} forUser An user identifier on your service (username or user id)
+ * @param {Apple.PaymentDiscount} withOffer The offer information
+ *
+ * @returns {Promise<void>}
+ */
+export function buyProductWithOfferIOS(sku: string, forUser: string, withOffer: Apple.PaymentDiscount) : Promise<void>;
+
+/**
  * Buy a product with a specified quantity (iOS only)
  * @param {string} sku The product's sku/ID
  * @param {number} quantity The amount of product to buy
@@ -181,3 +199,9 @@ export function validateReceiptIos(receiptBody: Apple.ReceiptValidationRequest, 
  * @param isSub whether this is subscription or inapp. `true` for subscription.
  */
 export function validateReceiptAndroid(packageName: string, productId: string, productToken: string, accessToken: string, isSub: boolean): Promise<object | false>;
+
+/**
+  * Add IAP purchase event in ios.
+ * @returns {callback(e: Event)}
+ */
+export function addAdditionalSuccessPurchaseListenerIOS(fn: Function) : EmitterSubscription;

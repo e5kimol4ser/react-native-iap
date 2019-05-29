@@ -1,3 +1,4 @@
+
 package com.dooboolab.RNIap;
 
 import android.app.Activity;
@@ -66,7 +67,7 @@ public class RNIapModule extends ReactContextBaseJavaModule {
   private IInAppBillingService mService;
   private BillingClient mBillingClient;
 
-  ServiceConnection mServiceConn = new ServiceConnection() {
+  private ServiceConnection mServiceConn = new ServiceConnection() {
     @Override public void onServiceDisconnected(ComponentName name) {
       mService = null;
     }
@@ -76,7 +77,7 @@ public class RNIapModule extends ReactContextBaseJavaModule {
     }
   };
 
-  LifecycleEventListener lifecycleEventListener = new LifecycleEventListener() {
+  private LifecycleEventListener lifecycleEventListener = new LifecycleEventListener() {
     @Override
     public void onHostResume() {
 
@@ -107,7 +108,7 @@ public class RNIapModule extends ReactContextBaseJavaModule {
   }
 
   private void ensureConnection (final Promise promise, final Runnable callback) {
-    if (mBillingClient != null) {
+    if (mBillingClient != null && mBillingClient.isReady()) {
       callback.run();
       return;
     }
@@ -116,14 +117,19 @@ public class RNIapModule extends ReactContextBaseJavaModule {
     // This is the key line that fixed everything for me
     intent.setPackage("com.android.vending");
 
-    BillingClientStateListener billingClientStateListener = new BillingClientStateListener() {
+    final BillingClientStateListener billingClientStateListener = new BillingClientStateListener() {
+      private boolean bSetupCallbackConsumed = false;
+
       @Override
       public void onBillingSetupFinished(@BillingClient.BillingResponse int responseCode) {
-        if (responseCode == BillingClient.BillingResponse.OK) {
-          Log.d(TAG, "billing client ready");
-          callback.run();
-        } else {
-          rejectPromiseWithBillingError(promise, responseCode);
+        if (!bSetupCallbackConsumed) {
+          bSetupCallbackConsumed = true;
+          if (responseCode == BillingClient.BillingResponse.OK ) {
+            Log.d(TAG, "billing client ready");
+            callback.run();
+          } else {
+            rejectPromiseWithBillingError(promise, responseCode);
+          }
         }
       }
 
@@ -167,8 +173,6 @@ public class RNIapModule extends ReactContextBaseJavaModule {
         return;
       }
     }
-
-    mBillingClient = null;
     promise.resolve(true);
   }
 
@@ -454,7 +458,7 @@ public class RNIapModule extends ReactContextBaseJavaModule {
         promise.reject(E_NETWORK_ERROR, "The service is disconnected (check your internet connection.)");
         break;
       case BillingClient.BillingResponse.USER_CANCELED:
-        promise.reject(E_USER_CANCELLED, "Cancelled.");
+        promise.reject(E_USER_CANCELLED, "Payment is Cancelled.");
         break;
       case BillingClient.BillingResponse.SERVICE_UNAVAILABLE:
         promise.reject(E_SERVICE_ERROR, "The service is unreachable. This may be your internet connection, or the Play Store may be down.");
@@ -466,7 +470,7 @@ public class RNIapModule extends ReactContextBaseJavaModule {
         promise.reject(E_ITEM_UNAVAILABLE, "That item is unavailable.");
         break;
       case BillingClient.BillingResponse.DEVELOPER_ERROR:
-        promise.reject(E_DEVELOPER_ERROR, "Google is indicating that we have an error in our code. Sorry about that.");
+        promise.reject(E_DEVELOPER_ERROR, "Google is indicating that we have some issue connecting to payment.");
         break;
       case BillingClient.BillingResponse.ERROR:
         promise.reject(E_UNKNOWN, "An unknown or unexpected error has occured. Please try again later.");
